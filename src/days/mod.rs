@@ -6,6 +6,7 @@ mod day2;
 mod day3;
 mod day4;
 mod day5;
+mod day6;
 
 pub fn run_day(day: u8) {
     let file_path = "input.txt";
@@ -19,6 +20,7 @@ pub fn run_day(day: u8) {
         3 => day3::run(contents),
         4 => day4::run(contents),
         5 => day5::run(contents),
+        6 => day6::run(contents),
         _ => println!("Day does not exist"),
     };
 }
