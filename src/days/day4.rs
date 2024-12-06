@@ -202,15 +202,15 @@ impl Matrix {
         return self.matrix.get(x).unwrap().len() - 1 >= y + self.intent;
     }
 
-    fn has_left(&self, x: usize, y: usize) -> bool {
+    fn has_left(&self, _x: usize, y: usize) -> bool {
         return y >= self.intent;
     }
 
-    fn has_top(&self, x: usize, y: usize) -> bool {
+    fn has_top(&self, x: usize, _y: usize) -> bool {
         return x >= self.intent;
     }
 
-    fn has_bottom(&self, x: usize, y: usize) -> bool {
+    fn has_bottom(&self, x: usize, _y: usize) -> bool {
         return self.matrix.len() - 1 >= x + self.intent;
     }
 }
