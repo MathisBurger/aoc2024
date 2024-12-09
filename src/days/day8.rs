@@ -132,7 +132,7 @@ impl Matrix {
         {
             return false;
         }
-        let mut loc: &mut Field = self
+        let loc: &mut Field = self
             .inner_matrix
             .get_mut(x as usize)
             .unwrap()
