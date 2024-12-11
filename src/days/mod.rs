@@ -3,6 +3,7 @@ use std::io::Read;
 
 mod day1;
 mod day10;
+mod day11;
 mod day2;
 mod day3;
 mod day4;
@@ -29,6 +30,7 @@ pub fn run_day(day: u8) {
         8 => day8::run(contents),
         9 => day9::run(contents),
         10 => day10::run(contents),
+        11 => day11::run(contents),
         _ => println!("Day does not exist"),
     };
 }
