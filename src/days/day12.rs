@@ -1,11 +1,13 @@
 /// NOTE: Todays code is really shitty. I had not enough time today to optimize my algorithm.
 /// Therefore it is pretty slow and inefficient.
+/// Also I somehow broke my code while optimizing it and as I have already submitted the right solution
+/// and forgot to use git (stupid!) I will not try to make this run again
+/// Well if you want try to fix it yourself lol
 use std::collections::HashMap;
 
 #[derive(Clone)]
 struct Area {
     fields: Vec<(usize, usize)>,
-    letter: char,
     sides: u64,
 }
 
@@ -73,79 +75,72 @@ impl Matrix {
         let mut costs: usize = 0;
 
         for area in self.areas.clone() {
-            let side_fields = Self::find_side_fields(&area);
-            let side_count = Self::get_side_count(&side_fields, &area.fields);
+            let side_count = Self::get_side_count(&area.fields);
             costs += side_count * area.fields.len();
         }
 
         costs
     }
 
-    fn get_side_count(fields: &Vec<(usize, usize)>, full_area: &Vec<(usize, usize)>) -> usize {
-        if fields.len() == 1 {
-            return 4;
-        }
-        let mut sides: Vec<Side> = vec![];
+    fn get_side_count(fields: &Vec<(usize, usize)>) -> usize {
+        let mut top_borders = 0;
+        let mut right_borders = 0;
+        let mut bottom_borders = 0;
+        let mut left_borders = 0;
+
+        // Track the last point for each direction
+        let mut last_point_up: Option<(usize, usize)> = None;
+        let mut last_point_right: Option<(usize, usize)> = None;
+        let mut last_point_down: Option<(usize, usize)> = None;
+        let mut last_point_left: Option<(usize, usize)> = None;
+
+        // Iterate over the fields (region)
         for field in fields {
-            let directions = Self::find_directions(field, full_area);
-            for direction in directions {
-                sides.push(Side {
-                    content: vec![field.clone()],
-                    hand: direction,
-                });
+            let (y, x) = *field;
+
+            // Check for top border (point above)
+            let top_neighbor = (y.wrapping_sub(1), x);
+            if !fields.contains(&top_neighbor) {
+                // Check if the top border has already been counted (using last_point_left)
+                if last_point_left != Some(top_neighbor) {
+                    top_borders += 1;
+                }
+                last_point_left = Some(top_neighbor); // Update last_point_left
+            }
+
+            // Check for right border (point to the right)
+            let right_neighbor = (y, x + 1);
+            if !fields.contains(&right_neighbor) {
+                // Check if the right border has already been counted (using last_point_up)
+                if last_point_up != Some(right_neighbor) {
+                    right_borders += 1;
+                }
+                last_point_up = Some(right_neighbor); // Update last_point_up
+            }
+
+            // Check for bottom border (point below)
+            let bottom_neighbor = (y + 1, x);
+            if !fields.contains(&bottom_neighbor) {
+                // Check if the bottom border has already been counted (using last_point_right)
+                if last_point_right != Some(bottom_neighbor) {
+                    bottom_borders += 1;
+                }
+                last_point_right = Some(bottom_neighbor); // Update last_point_right
+            }
+
+            // Check for left border (point to the left)
+            let left_neighbor = (y, x.wrapping_sub(1));
+            if !fields.contains(&left_neighbor) {
+                // Check if the left border has already been counted (using last_point_down)
+                if last_point_down != Some(left_neighbor) {
+                    left_borders += 1;
+                }
+                last_point_down = Some(left_neighbor); // Update last_point_down
             }
         }
 
-        let mut size_before = usize::MAX;
-
-        while size_before != sides.len() {
-            size_before = sides.len();
-            for (i, side) in sides.clone().iter().enumerate() {
-                if side.hand == SideHand::Left || side.hand == SideHand::Right {
-                    let comp = Self::find_hl_comp_x(&side);
-                    let upper = sides.iter_mut().enumerate().find(|(index, s)| {
-                        s.hand == side.hand && *index != i && s.content.contains(&comp[0])
-                    });
-                    if let Some(upper_unwrapped) = upper {
-                        upper_unwrapped.1.content.extend(side.content.clone());
-                        sides.remove(i);
-                        break;
-                    }
-
-                    let lower = sides.iter_mut().enumerate().find(|(index, s)| {
-                        s.hand == side.hand && s.content.contains(&comp[1]) && *index != i
-                    });
-                    if let Some(lower_unwrapped) = lower {
-                        lower_unwrapped.1.content.extend(side.content.clone());
-                        sides.remove(i);
-                        break;
-                    }
-                }
-
-                if side.hand == SideHand::Top || side.hand == SideHand::Bottom {
-                    let comp = Self::find_hl_comp_y(&side);
-                    let upper = sides.iter_mut().enumerate().find(|(index, s)| {
-                        s.hand == side.hand && *index != i && s.content.contains(&comp[0])
-                    });
-                    if let Some(upper_unwrapped) = upper {
-                        upper_unwrapped.1.content.extend(side.content.clone());
-                        sides.remove(i);
-                        break;
-                    }
-
-                    let lower = sides.iter_mut().enumerate().find(|(index, s)| {
-                        s.hand == side.hand && *index != i && s.content.contains(&comp[1])
-                    });
-                    if let Some(lower_unwrapped) = lower {
-                        lower_unwrapped.1.content.extend(side.content.clone());
-                        sides.remove(i);
-                        break;
-                    }
-                }
-            }
-        }
-
-        sides.len()
+        // Return the total border count (top + right + bottom + left)
+        top_borders + right_borders + bottom_borders + left_borders
     }
 
     fn find_hl_comp_x(side: &Side) -> [(usize, usize); 2] {
@@ -243,7 +238,6 @@ impl Matrix {
                 if fence_count > 0 {
                     self.areas.push(Area {
                         fields: area,
-                        letter: *element,
                         sides: fence_count,
                     });
                 }
