@@ -6,6 +6,7 @@ mod day10;
 mod day11;
 mod day12;
 mod day13;
+mod day14;
 mod day2;
 mod day3;
 mod day4;
@@ -35,6 +36,7 @@ pub fn run_day(day: u8) {
         11 => day11::run(contents),
         12 => day12::run(contents),
         13 => day13::run(contents),
+        14 => day14::run(contents),
         _ => println!("Day does not exist"),
     };
 }
