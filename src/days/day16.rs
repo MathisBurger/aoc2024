@@ -1,6 +1,6 @@
 use std::collections::{BinaryHeap, HashMap, HashSet};
 
-struct Maze {
+pub struct Maze {
     fields: Vec<Vec<char>>,
     start: (usize, usize),
 }
