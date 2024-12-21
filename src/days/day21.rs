@@ -4,6 +4,8 @@
 /// My code for task1 was way to inefficient for task2, therefore I went with a new a new path and got some inspriration from reddit to solve
 /// todays puzzle, because it was also pretty late.
 /// If the solution in here does not work properly, I might have somehow found another workarround that is not in git.
+///
+/// NOTICE: This solution here does NOT work. I found an workarround with python that was a little easier.
 use std::cmp::min;
 use std::collections::HashMap;
 use std::iter::{self, repeat};
